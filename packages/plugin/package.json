@@ -1,6 +1,6 @@
 {
   "name": "ds-harness-remote-fast",
-  "version": "0.6.5-fast.2",
+  "version": "0.6.5-fast.3",
   "description": "P2P-based, end-to-end encrypted remote access to DeepSeek Harness, CodeX, Claude Code, Pi, and other workspaces from web and mobile clients.",
   "keywords": [
     "deepseek",
@@ -78,6 +78,7 @@
   },
   "scripts": {
     "build": "node scripts/verify-version-sync.mjs && tsc -p tsconfig.json && node scripts/build-bundles.mjs",
+    "prepack": "node scripts/build-bundles.mjs && node scripts/verify-bundles.mjs",
     "check": "node scripts/verify-version-sync.mjs && tsc -p tsconfig.test.json",
     "test": "node scripts/verify-version-sync.mjs && vitest run"
   },
