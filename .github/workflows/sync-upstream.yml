@@ -1,0 +1,36 @@
+name: Sync upstream (rainow)
+
+on:
+  schedule:
+    - cron: "23 3 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: sync-upstream
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout fork
+        uses: actions/checkout@v4
+        with:
+          ref: lite
+          fetch-depth: 0
+      - name: Reset to upstream lite (keep this workflow file)
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          cp .github/workflows/sync-upstream.yml /tmp/sync-upstream.yml
+          git remote add upstream https://github.com/rainow/ds-harness-remote-fast.git
+          git fetch upstream lite
+          git reset --hard upstream/lite
+          mkdir -p .github/workflows
+          cp /tmp/sync-upstream.yml .github/workflows/sync-upstream.yml
+          git add .github/workflows/sync-upstream.yml
+          git diff --cached --quiet || git commit -m "ci: 每日自动同步上游 rainow/ds-harness-remote-fast"
+          git push --force origin lite
